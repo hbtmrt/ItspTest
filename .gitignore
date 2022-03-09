@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/ItspTest/ItspTest.Api/bin/Debug/net5.0
+/ItspTest/.vs/ItspTest/v16
+/ItspTest/ItspTest.Api/obj
