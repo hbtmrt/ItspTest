@@ -124,12 +124,53 @@ namespace ItspTest.Api.Controllers
             }
             catch (NotAllowedActionException)
             {
-                _logger.LogError(Constants.Log.Error.NotAllowed, id);
+                _logger.LogError(Constants.Log.Error.NotAllowed);
                 return StatusCode(StatusCodes.Status403Forbidden, Constants.ResponseMessages.Error.Forbidden);
+            }
+            catch (MovieNotFoundException)
+            {
+                _logger.LogError(Constants.Log.Error.MovieNotFoundInCollection, request.MovieId, id);
+                return StatusCode(StatusCodes.Status500InternalServerError, Constants.ResponseMessages.Error.MovieNotFound);
             }
             catch (Exception ex)
             {
                 _logger.LogError(Constants.Log.Error.AddMovieFailed, ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpDelete("{collectionId}/movies/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteMovieAsync(int collectionId, int id)
+        {
+            _logger.LogInformation(Constants.Log.Info.DeleteMovieRequestReceived);
+
+            try
+            {
+                string currentUserId = _userService.GetUserId(User);
+                await _movieCollectionService.DeleteMovieAsync(collectionId, id, currentUserId);
+                _logger.LogInformation(Constants.Log.Info.MovieDeleted, id, collectionId);
+                return Ok();
+            }
+            catch (CollectionNotExistException)
+            {
+                _logger.LogError(Constants.Log.Error.CollectionNotExist, collectionId);
+                return StatusCode(StatusCodes.Status500InternalServerError, Constants.ResponseMessages.Error.CollectionNotExist);
+            }
+            catch (NotAllowedActionException)
+            {
+                _logger.LogError(Constants.Log.Error.NotAllowed);
+                return StatusCode(StatusCodes.Status403Forbidden, Constants.ResponseMessages.Error.Forbidden);
+            }
+            catch (MovieNotFoundException)
+            {
+                _logger.LogError(Constants.Log.Error.MovieNotFoundInCollection, id, collectionId);
+                return StatusCode(StatusCodes.Status500InternalServerError, Constants.ResponseMessages.Error.MovieNotFound);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.Log.Error.DeleteMovieFailed, ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
         }

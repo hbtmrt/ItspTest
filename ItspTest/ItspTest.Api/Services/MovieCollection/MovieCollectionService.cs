@@ -70,9 +70,9 @@ namespace ItspTest.Api.Services.MovieCollection
             return _mapper.Map<List<MovieDto>>(movieList);
         }
 
-        public async Task<MovieDto> AddMovieAsync(int id, AddMovieRequest request, string currentUserId)
+        public async Task<MovieDto> AddMovieAsync(int collectionId, AddMovieRequest request, string currentUserId)
         {
-            UserCollection collectionExists = await _collectionContext.UserCollections.FindAsync(id);
+            UserCollection collectionExists = await _collectionContext.UserCollections.FindAsync(collectionId);
 
             if (collectionExists == null)
             {
@@ -84,21 +84,48 @@ namespace ItspTest.Api.Services.MovieCollection
                 throw new NotAllowedActionException();
             }
 
-            Movie newMovie = new()
-            {
-                Name = request.Name,
-                Year = request.Year
-            };
+            Movie movie = await _collectionContext.Movies.FindAsync(request.MovieId);
 
-            await _collectionContext.Movies.AddAsync(newMovie);
+            if (movie == null)
+            {
+                throw new MovieNotFoundException();
+            }
 
             await _collectionContext.UserMovieCollections.AddAsync(new UserMovieCollection
             {
-                MovieId = newMovie.Id,
+                MovieId = request.MovieId,
                 UserCollectionId = collectionExists.Id
             });
 
-            return _mapper.Map<MovieDto>(newMovie);
+            await _collectionContext.SaveChangesAsync();
+
+            return _mapper.Map<MovieDto>(movie);
+        }
+
+        public async Task DeleteMovieAsync(int collectionId, int movieId, string currentUserId)
+        {
+            UserCollection collectionExists = await _collectionContext.UserCollections.FindAsync(collectionId);
+
+            if (collectionExists == null)
+            {
+                throw new CollectionNotExistException();
+            }
+
+            if (!collectionExists.UserId.Equals(currentUserId))
+            {
+                throw new NotAllowedActionException();
+            }
+
+            var movie = _collectionContext.UserMovieCollections
+                .FirstOrDefault(umc => umc.UserCollectionId == collectionId && umc.MovieId == movieId);
+
+            if (movie == null)
+            {
+                throw new MovieNotFoundException();
+            }
+
+            _collectionContext.UserMovieCollections.Remove(movie);
+            _collectionContext.SaveChanges();
         }
     }
 }

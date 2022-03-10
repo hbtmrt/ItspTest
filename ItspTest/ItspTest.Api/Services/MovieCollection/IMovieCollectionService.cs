@@ -11,5 +11,6 @@ namespace ItspTest.Api.Services.MovieCollection
         Task<MovieCollectionDto> AddCollectionAsync(AddMovieCollectionRequest request);
         Task<List<MovieDto>> SearchCollection(string userId, string searchText);
         Task<MovieDto> AddMovieAsync(int id, AddMovieRequest request, string currentUserId);
+        Task DeleteMovieAsync(int collectionId, int movieId, string currentUserId);
     }
 }

@@ -12,6 +12,7 @@
                 public const string CollectionAlreadyExist = "The movie collection already exist.";
                 public const string CollectionNotExist = "The collection not exist for the user.";
                 public const string Forbidden = "User is not allowed to do this action.";
+                public const string MovieNotFound = "The movie not found.";
             }
 
             public static class Success
@@ -32,6 +33,8 @@
                 public const string CollectionCreated = "The collection created successfully: {0}";
                 public const string SearchCollectionRequestReceived = "Search collection request received.";
                 public const string AddMovieRequestReceived = "Add movie request received.";
+                public const string DeleteMovieRequestReceived = "Delete movie request received.";
+                public const string MovieDeleted = "The movie of id {0} is deleted from the collection of id {1}";
             }
 
             public static class Error
@@ -46,6 +49,8 @@
                 public const string SearchCollectionFailed = "Failed on searching collection: {0}";
                 public const string AddMovieFailed = "Failed on adding a movie {0}";
                 public const string NotAllowed = "Sorry, you cannot perform this action.";
+                public const string MovieNotFoundInCollection = "Movie of id {0} not found in the collection of id {1}";
+                public const string DeleteMovieFailed = "Failed on Deleting movie {1}";
 
             }
         }
