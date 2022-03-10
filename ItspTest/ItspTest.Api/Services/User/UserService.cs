@@ -25,10 +25,9 @@ namespace ItspTest.Api.Services.User
             return null;
         }
 
-        public async Task<bool> CreateAsync(ApplicationUser user, string password)
+        public async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
         {
-            IdentityResult result = await _userManager.CreateAsync(user, password);
-            return result.Succeeded;
+            return await _userManager.CreateAsync(user, password);
         }
     }
 }

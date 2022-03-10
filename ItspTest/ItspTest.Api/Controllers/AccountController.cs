@@ -5,8 +5,11 @@ using ItspTest.Core.Models;
 using ItspTest.Core.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
@@ -20,21 +23,30 @@ namespace ItspTest.Api.Controllers
     {
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<AccountController> _logger;
 
         public AccountController(
             IUserService userService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILogger<AccountController> logger)
         {
             _userService = userService;
             _configuration = configuration;
+            _logger = logger;
         }
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
         public async Task<IActionResult> AuthenticateAsync([FromBody] LoginRequest model)
         {
+            _logger.LogInformation(
+                Constants.Log.Info.UserAuthenticateRequestReceived,
+                JsonConvert.SerializeObject(model));
+
             if (!ModelState.IsValid)
             {
+                _logger.LogError(Constants.Log.Error.InvalidRequest, JsonConvert.SerializeObject(model));
+
                 return BadRequest(Constants.ResponseMessages.Error.UsernameOrPasswordRequired);
             }
 
@@ -42,14 +54,18 @@ namespace ItspTest.Api.Controllers
 
             if (user == null)
             {
+                _logger.LogError(Constants.Log.Error.UserNotExist, model.Username);
+
                 return Unauthorized();
             }
 
             JwtSecurityToken token = new JwtHelper(_configuration).GetToken(user);
+            string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+            _logger.LogInformation(Constants.Log.Info.TokenCreated, tokenString);
 
             return Ok(new
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
+                token = tokenString,
                 expiration = token.ValidTo
             });
         }
@@ -59,14 +75,22 @@ namespace ItspTest.Api.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterRequest model)
         {
+            _logger.LogInformation(
+                    Constants.Log.Info.UserRegisterRequestReceived,
+                    JsonConvert.SerializeObject(model));
+
             if (!ModelState.IsValid)
             {
+                _logger.LogError(Constants.Log.Error.InvalidRequest, JsonConvert.SerializeObject(model));
                 return BadRequest(Constants.ResponseMessages.Error.UsernameOrPasswordRequired);
             }
 
             ApplicationUser userExists = await _userService.GetUserAsync(model.Username, model.Password);
             if (userExists != null)
+            {
+                _logger.LogError(Constants.Log.Error.UserAlreadyExist, model.Username);
                 return StatusCode(StatusCodes.Status500InternalServerError, Constants.ResponseMessages.Error.UserExist);
+            }
 
             ApplicationUser user = new()
             {
@@ -76,9 +100,12 @@ namespace ItspTest.Api.Controllers
                 LastName = model.LastName
             };
 
-            bool succeeded = await _userService.CreateAsync(user, model.Password);
-            if (!succeeded)
+            IdentityResult result = await _userService.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+            {
+                _logger.LogError(Constants.Log.Error.UserCreationFailed, JsonConvert.SerializeObject(result.Errors));
                 return StatusCode(StatusCodes.Status500InternalServerError, Constants.ResponseMessages.Error.UserCreationFailed);
+            }
 
             return Ok(Constants.ResponseMessages.Success.UserCreated);
         }
