@@ -1,6 +1,7 @@
 ﻿using ItspTest.Api.Dtos;
 using ItspTest.Api.Dtos.Requests;
 using ItspTest.Api.Services.MovieCollection;
+using ItspTest.Core.Authorization;
 using ItspTest.Core.CustomExceptions;
 using ItspTest.Core.Statics;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace ItspTest.Api.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Role.User)]
     [Route("api/[controller]")]
     [ApiController]
     public class CollectionController : ControllerBase

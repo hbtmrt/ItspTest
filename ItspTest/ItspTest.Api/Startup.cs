@@ -2,6 +2,7 @@ using AutoMapper;
 using ItspTest.Api.Automapper;
 using ItspTest.Api.Services.MovieCollection;
 using ItspTest.Api.Services.User;
+using ItspTest.Core.Authorization;
 using ItspTest.Core.Contexts;
 using ItspTest.Core.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -75,7 +76,7 @@ namespace ItspTest.Api
                     ValidateAudience = true,
                     ValidAudience = Configuration["JWT:ValidAudience"],
                     ValidIssuer = Configuration["JWT:ValidIssuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"])),
                 };
             });
 

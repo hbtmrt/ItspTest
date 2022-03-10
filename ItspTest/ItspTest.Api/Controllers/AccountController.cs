@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 
@@ -59,7 +60,9 @@ namespace ItspTest.Api.Controllers
                 return Unauthorized();
             }
 
-            JwtSecurityToken token = new JwtHelper(_configuration).GetToken(user);
+            List<string> userRoles = await _userService.GetUserRoles(user);
+
+            JwtSecurityToken token = new JwtHelper(_configuration).GetToken(user, userRoles);
             string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
             _logger.LogInformation(Constants.Log.Info.TokenCreated, tokenString);
 
@@ -100,7 +103,7 @@ namespace ItspTest.Api.Controllers
                 LastName = model.LastName
             };
 
-            IdentityResult result = await _userService.CreateAsync(user, model.Password);
+            IdentityResult result = await _userService.CreateAsync(user, model.Password, model.RoleValue);
             if (!result.Succeeded)
             {
                 _logger.LogError(Constants.Log.Error.UserCreationFailed, JsonConvert.SerializeObject(result.Errors));

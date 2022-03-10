@@ -1,5 +1,8 @@
 ﻿using ItspTest.Core.Models;
 using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ItspTest.Api.Services.User
@@ -7,10 +10,12 @@ namespace ItspTest.Api.Services.User
     public sealed class UserService : IUserService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserService(UserManager<ApplicationUser> userManager)
+        public UserService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public async Task<ApplicationUser> GetUserAsync(string username, string password)
@@ -25,9 +30,26 @@ namespace ItspTest.Api.Services.User
             return null;
         }
 
-        public async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
+        public async Task<IdentityResult> CreateAsync(ApplicationUser user, string password, string role)
         {
-            return await _userManager.CreateAsync(user, password);
+            var result = await _userManager.CreateAsync(user, password);
+
+            if (!await _roleManager.RoleExistsAsync(role))
+            {
+                await _roleManager.CreateAsync(new IdentityRole
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = role
+                });
+            }
+
+            await _userManager.AddToRoleAsync(user, role);
+            return result;
+        }
+
+        public async Task<List<string>> GetUserRoles(ApplicationUser user)
+        {
+            return (await _userManager.GetRolesAsync(user)).ToList();
         }
     }
 }
