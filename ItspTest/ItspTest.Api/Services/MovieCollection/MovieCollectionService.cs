@@ -36,7 +36,7 @@ namespace ItspTest.Api.Services.MovieCollection
                 throw new CollectionExistException();
             }
 
-            UserCollection userCollection = new UserCollection
+            UserCollection userCollection = new()
             {
                 UserId = request.UserId,
                 Name = request.Name
@@ -68,6 +68,37 @@ namespace ItspTest.Api.Services.MovieCollection
 
             List<Movie> movieList = query.Select(umc => umc.Movie).ToList();
             return _mapper.Map<List<MovieDto>>(movieList);
+        }
+
+        public async Task<MovieDto> AddMovieAsync(int id, AddMovieRequest request, string currentUserId)
+        {
+            UserCollection collectionExists = await _collectionContext.UserCollections.FindAsync(id);
+
+            if (collectionExists == null)
+            {
+                throw new CollectionNotExistException();
+            }
+
+            if (!collectionExists.UserId.Equals(currentUserId))
+            {
+                throw new NotAllowedActionException();
+            }
+
+            Movie newMovie = new()
+            {
+                Name = request.Name,
+                Year = request.Year
+            };
+
+            await _collectionContext.Movies.AddAsync(newMovie);
+
+            await _collectionContext.UserMovieCollections.AddAsync(new UserMovieCollection
+            {
+                MovieId = newMovie.Id,
+                UserCollectionId = collectionExists.Id
+            });
+
+            return _mapper.Map<MovieDto>(newMovie);
         }
     }
 }

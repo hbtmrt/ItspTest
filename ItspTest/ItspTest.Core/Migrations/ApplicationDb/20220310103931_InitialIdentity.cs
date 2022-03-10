@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ItspTest.Core.Migrations
+namespace ItspTest.Core.Migrations.ApplicationDb
 {
-    public partial class Initial : Migration
+    public partial class InitialIdentity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

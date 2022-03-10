@@ -11,6 +11,7 @@
                 public const string UserCreationFailed = "User creation failed! Please check user details and try again.";
                 public const string CollectionAlreadyExist = "The movie collection already exist.";
                 public const string CollectionNotExist = "The collection not exist for the user.";
+                public const string Forbidden = "User is not allowed to do this action.";
             }
 
             public static class Success
@@ -29,7 +30,8 @@
                 public const string GetCollectionsRequestReceived = "Get all collection request received.";
                 public const string AddCollectionRequestReceived = "Add collection request received.";
                 public const string CollectionCreated = "The collection created successfully: {0}";
-                public const string SearchCollectionRequest = "Search collection request received.";
+                public const string SearchCollectionRequestReceived = "Search collection request received.";
+                public const string AddMovieRequestReceived = "Add movie request received.";
             }
 
             public static class Error
@@ -42,6 +44,8 @@
                 public const string CollectionNotExist = "Collection not exist for the user: {0}";
                 public const string AddCollectionFailed = "Failed on creating a collection: {0}";
                 public const string SearchCollectionFailed = "Failed on searching collection: {0}";
+                public const string AddMovieFailed = "Failed on adding a movie {0}";
+                public const string NotAllowed = "Sorry, you cannot perform this action.";
 
             }
         }

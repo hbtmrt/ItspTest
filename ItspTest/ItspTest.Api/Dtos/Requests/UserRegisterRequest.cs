@@ -16,6 +16,7 @@ namespace ItspTest.Api.Dtos.Requests
 
         public string LastName { get; set; }
 
+        [Required]
         public RoleEnum Role { get; set; }
 
         [JsonIgnore]

@@ -1,6 +1,7 @@
 ﻿using ItspTest.Api.Dtos;
 using ItspTest.Api.Dtos.Requests;
 using ItspTest.Api.Services.MovieCollection;
+using ItspTest.Api.Services.User;
 using ItspTest.Core.Authorization;
 using ItspTest.Core.CustomExceptions;
 using ItspTest.Core.Statics;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ItspTest.Api.Controllers
@@ -21,13 +23,16 @@ namespace ItspTest.Api.Controllers
     public class CollectionController : ControllerBase
     {
         private readonly IMovieCollectionService _movieCollectionService;
+        private readonly IUserService _userService;
         private readonly ILogger<AccountController> _logger;
 
         public CollectionController(
             IMovieCollectionService movieCollectionService,
+            IUserService userService,
             ILogger<AccountController> logger)
         {
             _movieCollectionService = movieCollectionService;
+            _userService = userService;
             _logger = logger;
         }
 
@@ -50,7 +55,7 @@ namespace ItspTest.Api.Controllers
             if (!ModelState.IsValid)
             {
                 _logger.LogError(Constants.Log.Error.InvalidRequest, JsonConvert.SerializeObject(request));
-                return BadRequest(Constants.ResponseMessages.Error.UsernameOrPasswordRequired);
+                return BadRequest(JsonConvert.SerializeObject(ModelState.Values.SelectMany(v => v.Errors)));
             }
 
             try
@@ -76,7 +81,7 @@ namespace ItspTest.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SearchMyMovies(string id, string searchText)
         {
-            _logger.LogInformation(Constants.Log.Info.SearchCollectionRequest);
+            _logger.LogInformation(Constants.Log.Info.SearchCollectionRequestReceived);
 
             try
             {
@@ -84,12 +89,47 @@ namespace ItspTest.Api.Controllers
             }
             catch (CollectionNotExistException)
             {
-                _logger.LogError(Constants.Log.Error.CollectionExist, id);
+                _logger.LogError(Constants.Log.Error.CollectionNotExist, id);
                 return StatusCode(StatusCodes.Status500InternalServerError, Constants.ResponseMessages.Error.CollectionNotExist);
             }
             catch (Exception ex)
             {
                 _logger.LogError(Constants.Log.Error.SearchCollectionFailed, ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpPost("{id}/movies")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MovieDto))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AddMovieAsync(int id, [FromBody] AddMovieRequest request)
+        {
+            _logger.LogInformation(Constants.Log.Info.AddMovieRequestReceived);
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError(Constants.Log.Error.InvalidRequest, JsonConvert.SerializeObject(request));
+                return BadRequest(JsonConvert.SerializeObject(ModelState.Values.SelectMany(v => v.Errors)));
+            }
+
+            try
+            {
+                string currentUserId = _userService.GetUserId(User);
+                return Ok(await _movieCollectionService.AddMovieAsync(id, request, currentUserId));
+            }
+            catch (CollectionNotExistException)
+            {
+                _logger.LogError(Constants.Log.Error.CollectionNotExist, id);
+                return StatusCode(StatusCodes.Status500InternalServerError, Constants.ResponseMessages.Error.CollectionNotExist);
+            }
+            catch (NotAllowedActionException)
+            {
+                _logger.LogError(Constants.Log.Error.NotAllowed, id);
+                return StatusCode(StatusCodes.Status403Forbidden, Constants.ResponseMessages.Error.Forbidden);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.Log.Error.AddMovieFailed, ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
         }

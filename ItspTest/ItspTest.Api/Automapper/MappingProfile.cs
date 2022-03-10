@@ -9,6 +9,7 @@ namespace ItspTest.Api.Automapper
         public MappingProfile()
         {
             CreateMap<UserCollection, MovieCollectionDto>();
+            CreateMap<Movie, MovieDto>();
         }
     }
 }

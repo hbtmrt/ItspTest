@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ItspTest.Api.Services.User
@@ -50,6 +51,11 @@ namespace ItspTest.Api.Services.User
         public async Task<List<string>> GetUserRoles(ApplicationUser user)
         {
             return (await _userManager.GetRolesAsync(user)).ToList();
+        }
+
+        public string GetUserId(ClaimsPrincipal user)
+        {
+            return _userManager.GetUserId(user);
         }
     }
 }
