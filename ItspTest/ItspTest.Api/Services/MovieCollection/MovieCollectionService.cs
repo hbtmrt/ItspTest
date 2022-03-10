@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using ItspTest.Api.Dtos;
+using ItspTest.Api.Dtos.Requests;
 using ItspTest.Core.Contexts;
+using ItspTest.Core.CustomExceptions;
+using ItspTest.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,8 +23,28 @@ namespace ItspTest.Api.Services.MovieCollection
 
         public async Task<List<MovieCollectionDto>> GetUserCollectionsAsync()
         {
-            var collections = _mapper.Map<List<MovieCollectionDto>>(await _collectionContext.UserCollections.ToListAsync());
-            return collections;
+            return _mapper.Map<List<MovieCollectionDto>>(await _collectionContext.UserCollections.ToListAsync());
+        }
+
+        public async Task<MovieCollectionDto> AddCollectionAsync(AddMovieCollectionRequest request)
+        {
+            UserCollection collectionExists = await _collectionContext.UserCollections.SingleOrDefaultAsync(c => c.UserId.Equals(request.UserId));
+
+            if (collectionExists != null)
+            {
+                throw new CollectionExistException();
+            }
+
+            UserCollection userCollection = new UserCollection
+            {
+                UserId = request.UserId,
+                Name = request.Name
+            };
+
+            _collectionContext.UserCollections.Add(userCollection);
+            await _collectionContext.SaveChangesAsync();
+
+            return _mapper.Map<MovieCollectionDto>(userCollection);
         }
     }
 }
