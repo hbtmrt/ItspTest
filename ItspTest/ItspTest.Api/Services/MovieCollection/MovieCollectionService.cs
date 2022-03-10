@@ -48,9 +48,9 @@ namespace ItspTest.Api.Services.MovieCollection
             return _mapper.Map<MovieCollectionDto>(userCollection);
         }
 
-        public async Task<List<MovieDto>> SearchCollection(string userId, string searchText)
+        public async Task<List<MovieDto>> SearchCollection(int id, string searchText)
         {
-            UserCollection userCollection = await _collectionContext.UserCollections.SingleOrDefaultAsync(c => c.UserId.Equals(userId));
+            UserCollection userCollection = await _collectionContext.UserCollections.FindAsync(id);
 
             if (userCollection == null)
             {

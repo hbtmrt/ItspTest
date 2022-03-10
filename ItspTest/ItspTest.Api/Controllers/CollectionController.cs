@@ -87,7 +87,7 @@ namespace ItspTest.Api.Controllers
         [HttpGet("{id}/movies")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MovieDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> SearchMyMovies(string id, string searchText)
+        public async Task<IActionResult> SearchMyMovies(int id, string searchText)
         {
             _logger.LogInformation(Constants.Log.Info.SearchCollectionRequestReceived);
 
