@@ -70,5 +70,28 @@ namespace ItspTest.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
         }
+
+        [HttpGet("{id}/movies")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MovieDto>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> SearchMyMovies(string id, string searchText)
+        {
+            _logger.LogInformation(Constants.Log.Info.SearchCollectionRequest);
+
+            try
+            {
+                return Ok(await _movieCollectionService.SearchCollection(id, searchText));
+            }
+            catch (CollectionNotExistException)
+            {
+                _logger.LogError(Constants.Log.Error.CollectionExist, id);
+                return StatusCode(StatusCodes.Status500InternalServerError, Constants.ResponseMessages.Error.CollectionNotExist);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.Log.Error.SearchCollectionFailed, ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
     }
 }

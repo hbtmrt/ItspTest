@@ -6,6 +6,7 @@ using ItspTest.Core.CustomExceptions;
 using ItspTest.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ItspTest.Api.Services.MovieCollection
@@ -45,6 +46,28 @@ namespace ItspTest.Api.Services.MovieCollection
             await _collectionContext.SaveChangesAsync();
 
             return _mapper.Map<MovieCollectionDto>(userCollection);
+        }
+
+        public async Task<List<MovieDto>> SearchCollection(string userId, string searchText)
+        {
+            UserCollection userCollection = await _collectionContext.UserCollections.SingleOrDefaultAsync(c => c.UserId.Equals(userId));
+
+            if (userCollection == null)
+            {
+                throw new CollectionNotExistException();
+            }
+
+            _collectionContext.Entry(userCollection).Collection(b => b.UserMovieCollections).Load();
+
+            var query = userCollection.UserMovieCollections.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                query = query.Where(umc => umc.Movie.Name.Contains(searchText));
+            }
+
+            List<Movie> movieList = query.Select(umc => umc.Movie).ToList();
+            return _mapper.Map<List<MovieDto>>(movieList);
         }
     }
 }
