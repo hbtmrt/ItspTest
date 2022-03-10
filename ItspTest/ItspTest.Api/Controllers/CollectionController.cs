@@ -3,6 +3,7 @@ using ItspTest.Api.Dtos.Requests;
 using ItspTest.Api.Services.MovieCollection;
 using ItspTest.Api.Services.User;
 using ItspTest.Core.Authorization;
+using ItspTest.Core.Contexts;
 using ItspTest.Core.CustomExceptions;
 using ItspTest.Core.Statics;
 using Microsoft.AspNetCore.Authorization;
@@ -34,6 +35,13 @@ namespace ItspTest.Api.Controllers
             _movieCollectionService = movieCollectionService;
             _userService = userService;
             _logger = logger;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("test")]
+        public async Task<string> TestAsync()
+        {
+            return "It works!!!";
         }
 
         [HttpGet]

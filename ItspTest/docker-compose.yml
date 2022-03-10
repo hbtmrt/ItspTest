@@ -1,0 +1,21 @@
+version: '3.4'
+
+services:
+  itsptest.api:
+    image: ${DOCKER_REGISTRY-}itsptestapi
+    build:
+      context: .
+      dockerfile: ItspTest.Api/Dockerfile
+
+  sqlserverService:
+    image: mcr.microsoft.com/mssql/server
+    hostname: 'sqlserver'
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: "BigPassw0rd"
+    volumes:
+      - ./data/mssql:/var/opt/mssql3
+    ports:
+      - '1433:1433'
+    expose:
+      - 1433

@@ -12,5 +12,6 @@ namespace ItspTest.Api.Services.User
         Task<IdentityResult> CreateAsync(ApplicationUser user, string password, string role);
         Task<List<string>> GetUserRoles(ApplicationUser user);
         string GetUserId(ClaimsPrincipal user);
+        string GetTest();
     }
 }

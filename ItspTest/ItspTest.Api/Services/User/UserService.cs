@@ -1,4 +1,5 @@
-﻿using ItspTest.Core.Models;
+﻿using ItspTest.Core.Contexts;
+using ItspTest.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,11 @@ namespace ItspTest.Api.Services.User
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _applicationDbContext;
 
-        public UserService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public UserService(
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -57,5 +61,7 @@ namespace ItspTest.Api.Services.User
         {
             return _userManager.GetUserId(user);
         }
+
+        public string GetTest() => "test test";
     }
 }

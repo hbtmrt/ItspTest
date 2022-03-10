@@ -2,7 +2,6 @@ using AutoMapper;
 using ItspTest.Api.Automapper;
 using ItspTest.Api.Services.MovieCollection;
 using ItspTest.Api.Services.User;
-using ItspTest.Core.Authorization;
 using ItspTest.Core.Contexts;
 using ItspTest.Core.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -44,8 +43,11 @@ namespace ItspTest.Api
 
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
 
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-            services.AddDbContext<CollectionContext>(options => options.UseSqlServer(connectionString));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+                Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDbContext<CollectionContext>(options => options.UseSqlServer(
+                Configuration.GetConnectionString("DefaultConnection")));
 
             // For Identity
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -85,7 +87,9 @@ namespace ItspTest.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(
+            IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory,
+            ApplicationDbContext applicationDbContext, CollectionContext collectionContext)
         {
             if (env.IsDevelopment())
             {
@@ -103,6 +107,9 @@ namespace ItspTest.Api
             {
                 endpoints.MapControllers();
             });
+
+            applicationDbContext.Database.Migrate();
+            collectionContext.Database.Migrate();
         }
     }
 }

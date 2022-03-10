@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace ItspTest.Core.Migrations.ApplicationDb
+namespace ItspTest.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220310103931_InitialIdentity")]
-    partial class InitialIdentity
+    [Migration("20220310192521_Initial-ApplicationDb")]
+    partial class InitialApplicationDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
