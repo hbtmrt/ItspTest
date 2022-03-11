@@ -48,7 +48,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.accountUIService.getUserId()
       .pipe(takeUntil(this.destroy$))
       .subscribe((userId: string) => {
-        if (!userId) {
+        if (!userId && userId !== "") {
           // TODO: Remove this 
           // this.router.navigate(['movie-collections']);
         }

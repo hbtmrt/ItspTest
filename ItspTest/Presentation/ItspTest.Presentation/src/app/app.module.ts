@@ -12,11 +12,13 @@ import { AccountUIService as AccountUIService } from './account-ui.service';
 import { RegisterComponent } from './register/register.component';
 import { MovieCollectionComponent } from './movie-collection/movie-collection.component';
 import { RegisterDataService } from './register/register-data.service';
+import { CollectionDataService } from './collection-data.service';
 
 const providers: any = [
   LoginDataService,
   AccountUIService,
-  RegisterDataService
+  RegisterDataService,
+  CollectionDataService
 ];
 
 @NgModule({

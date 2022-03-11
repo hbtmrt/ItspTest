@@ -27,9 +27,9 @@ namespace ItspTest.Api.Services.MovieCollection
             return _mapper.Map<List<MovieCollectionDto>>(await _collectionContext.UserCollections.ToListAsync());
         }
 
-        public async Task<MovieCollectionDto> AddCollectionAsync(AddMovieCollectionRequest request)
+        public async Task<MovieCollectionDto> AddCollectionAsync(string currentUserId, AddMovieCollectionRequest request)
         {
-            UserCollection collectionExists = await _collectionContext.UserCollections.SingleOrDefaultAsync(c => c.UserId.Equals(request.UserId));
+            UserCollection collectionExists = await _collectionContext.UserCollections.SingleOrDefaultAsync(c => c.UserId.Equals(currentUserId));
 
             if (collectionExists != null)
             {
@@ -38,7 +38,7 @@ namespace ItspTest.Api.Services.MovieCollection
 
             UserCollection userCollection = new()
             {
-                UserId = request.UserId,
+                UserId = currentUserId,
                 Name = request.Name
             };
 

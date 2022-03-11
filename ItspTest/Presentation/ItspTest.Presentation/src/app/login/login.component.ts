@@ -35,8 +35,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.dataService.login(this.username, this.password)
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: LoginResponse) => {
-        this.accountUIService.setUserId(data.userId);
-        this.accountUIService.setToken(data.token);
+        localStorage.setItem('itspUserId', data.userId);
+        localStorage.setItem('itspToken', data.token);
 
         this.router.navigate(['movie-collections']);
       });
@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.accountUIService.getUserId()
       .pipe(takeUntil(this.destroy$))
       .subscribe((userId: string) => {
-        if (!userId) {
+        if (!userId && userId !== "") {
           this.router.navigate(['movie-collections']);
         }
       });

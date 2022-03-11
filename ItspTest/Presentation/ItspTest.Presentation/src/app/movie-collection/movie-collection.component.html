@@ -1,1 +1,22 @@
-<p>movie-collection works!</p>
+<div>
+    <h2>Movie collections</h2>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let collection of movieCollections; index as i">
+            <td>
+                {{ collection.name }}
+            </td>
+            <td>
+                <input *ngIf="collection.canEdit" type="button" value="Edit" class="btn btn-primary btn-sm" />
+            </td>
+        </tr>
+    </tbody>
+</table>

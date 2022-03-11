@@ -68,15 +68,16 @@ namespace ItspTest.Api.Controllers
                 return BadRequest(JsonConvert.SerializeObject(ModelState.Values.SelectMany(v => v.Errors)));
             }
 
+            string currentUserId = _userService.GetUserId(User);
             try
             {
-                MovieCollectionDto collection = await _movieCollectionService.AddCollectionAsync(request);
+                MovieCollectionDto collection = await _movieCollectionService.AddCollectionAsync(currentUserId, request);
                 _logger.LogError(Constants.Log.Info.CollectionCreated, JsonConvert.SerializeObject(request));
                 return Ok(collection);
             }
             catch (CollectionExistException)
             {
-                _logger.LogError(Constants.Log.Error.CollectionExist, request.UserId);
+                _logger.LogError(Constants.Log.Error.CollectionExist, currentUserId);
                 return StatusCode(StatusCodes.Status500InternalServerError, Constants.ResponseMessages.Error.CollectionAlreadyExist);
             }
             catch (Exception ex)
