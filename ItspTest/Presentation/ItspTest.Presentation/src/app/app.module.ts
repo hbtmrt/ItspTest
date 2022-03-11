@@ -13,6 +13,7 @@ import { RegisterComponent } from './register/register.component';
 import { MovieCollectionComponent } from './movie-collection/movie-collection.component';
 import { RegisterDataService } from './register/register-data.service';
 import { CollectionDataService } from './collection-data.service';
+import { CollectionDetailsComponent } from './collection-details/collection-details.component';
 
 const providers: any = [
   LoginDataService,
@@ -26,7 +27,8 @@ const providers: any = [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    MovieCollectionComponent
+    MovieCollectionComponent,
+    CollectionDetailsComponent
   ],
   imports: [
     BrowserModule,

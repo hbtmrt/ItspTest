@@ -9,11 +9,11 @@
         <input type="password" [(ngModel)]="password" class="form-control" id="password">
     </div>
     <div class="mb-3">
-        <label for="firstName" class="form-label">Password</label>
+        <label for="firstName" class="form-label">First Name</label>
         <input type="text" [(ngModel)]="firstName" class="form-control" id="firstName">
     </div>
     <div class="mb-3">
-        <label for="lastName" class="form-label">Password</label>
+        <label for="lastName" class="form-label">Last Name</label>
         <input type="text" [(ngModel)]="lastName" class="form-control" id="lastName">
     </div>
 </div>
@@ -21,5 +21,9 @@
     <div class="col-2">
         <button type="submit" class="btn btn-primary" style="width: 100px;"
         (click)="register()">Register</button>
+    </div>
+    <div class="col-2">
+        <button type="submit" class="btn btn-primary" style="width: 100px;"
+        (click)="navigateToLogin()">Login</button>
     </div>
 </div>

@@ -44,14 +44,18 @@ export class RegisterComponent implements OnInit, OnDestroy {
       });
   }
 
+  navigateToLogin() {
+    this.router.navigate(['login']);
+  }
+
   private subscribeToUserId() {
     this.accountUIService.getUserId()
       .pipe(takeUntil(this.destroy$))
       .subscribe((userId: string) => {
         if (!userId && userId !== "") {
-          // TODO: Remove this 
-          // this.router.navigate(['movie-collections']);
+          this.router.navigate(['movie-collections']);
         }
       });
   }
+
 }

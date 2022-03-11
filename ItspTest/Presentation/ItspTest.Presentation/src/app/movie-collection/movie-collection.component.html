@@ -15,7 +15,7 @@
                 {{ collection.name }}
             </td>
             <td>
-                <input *ngIf="collection.canEdit" type="button" value="Edit" class="btn btn-primary btn-sm" />
+                <a *ngIf="collection.canEdit" [routerLink]="[collection.id, 'movies']">Edit</a>
             </td>
         </tr>
     </tbody>

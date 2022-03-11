@@ -127,5 +127,17 @@ namespace ItspTest.Api.Services.MovieCollection
             _collectionContext.UserMovieCollections.Remove(movie);
             _collectionContext.SaveChanges();
         }
+
+        public async Task<MovieCollectionDto> GetCollectionAsync(int id)
+        {
+            UserCollection collection = await _collectionContext.UserCollections.FindAsync(id);
+
+            if (collection == null)
+            {
+                throw new CollectionNotExistException();
+            }
+
+            return _mapper.Map<MovieCollectionDto>(collection);
+        }
     }
 }

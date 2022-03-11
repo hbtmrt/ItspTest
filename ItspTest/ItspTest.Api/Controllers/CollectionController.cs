@@ -87,6 +87,15 @@ namespace ItspTest.Api.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MovieCollectionDto))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCollectionAsync(int id)
+        {
+            _logger.LogInformation(Constants.Log.Info.GetCollectionsRequestReceived);
+            return Ok(await _movieCollectionService.GetCollectionAsync(id));
+        }
+
         [HttpGet("{id}/movies")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MovieDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
