@@ -8,14 +8,18 @@
         <label for="password" class="form-label">Password</label>
         <input type="password" [(ngModel)]="password" class="form-control" id="password">
     </div>
+    <div class="mb-3">
+        <label for="firstName" class="form-label">Password</label>
+        <input type="text" [(ngModel)]="firstName" class="form-control" id="firstName">
+    </div>
+    <div class="mb-3">
+        <label for="lastName" class="form-label">Password</label>
+        <input type="text" [(ngModel)]="lastName" class="form-control" id="lastName">
+    </div>
 </div>
 <div class="row">
     <div class="col-2">
         <button type="submit" class="btn btn-primary" style="width: 100px;"
-        (click)="login()">Login</button>
-    </div>
-    <div class="col-2">
-        <button type="submit" class="btn btn-primary" style="width: 100px;"
-        (click)="navigateToRegister()">Register</button>
+        (click)="register()">Register</button>
     </div>
 </div>

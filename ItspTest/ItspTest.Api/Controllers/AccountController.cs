@@ -113,7 +113,7 @@ namespace ItspTest.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, Constants.ResponseMessages.Error.UserCreationFailed);
             }
 
-            return Ok(Constants.ResponseMessages.Success.UserCreated);
+            return Ok(user);
         }
     }
 }

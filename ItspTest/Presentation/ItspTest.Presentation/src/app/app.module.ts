@@ -9,16 +9,22 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginDataService } from './login/login-data.service';
 import { AccountUIService as AccountUIService } from './account-ui.service';
+import { RegisterComponent } from './register/register.component';
+import { MovieCollectionComponent } from './movie-collection/movie-collection.component';
+import { RegisterDataService } from './register/register-data.service';
 
 const providers: any = [
   LoginDataService,
-  AccountUIService
+  AccountUIService,
+  RegisterDataService
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    RegisterComponent,
+    MovieCollectionComponent
   ],
   imports: [
     BrowserModule,
