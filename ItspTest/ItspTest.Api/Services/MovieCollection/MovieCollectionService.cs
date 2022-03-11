@@ -50,20 +50,20 @@ namespace ItspTest.Api.Services.MovieCollection
 
         public async Task<List<MovieDto>> SearchCollection(int id, string searchText)
         {
-            UserCollection userCollection = await _collectionContext.UserCollections.FindAsync(id);
+            UserCollection userCollection = await _collectionContext.UserCollections
+                .FindAsync(id);
 
             if (userCollection == null)
             {
                 throw new CollectionNotExistException();
             }
 
-            _collectionContext.Entry(userCollection).Collection(b => b.UserMovieCollections).Load();
-
-            var query = userCollection.UserMovieCollections.AsQueryable();
+            var query =_collectionContext.UserMovieCollections.Include(umc => umc.Movie)
+                .Where(umc => umc.UserCollectionId == id).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchText))
             {
-                query = query.Where(umc => umc.Movie.Name.Contains(searchText));
+                query = query.Where(q => q.Movie.Name.Contains(searchText));
             }
 
             List<Movie> movieList = query.Select(umc => umc.Movie).ToList();
@@ -136,6 +136,60 @@ namespace ItspTest.Api.Services.MovieCollection
             {
                 throw new CollectionNotExistException();
             }
+
+            return _mapper.Map<MovieCollectionDto>(collection);
+        }
+
+        public async Task<List<MovieDto>> GetAvailableMovies(int collectionId, string currentUserId)
+        {
+            UserCollection collection = await _collectionContext.UserCollections.FindAsync(collectionId);
+
+            if (collection == null)
+            {
+                throw new CollectionNotExistException();
+            }
+
+            if (!collection.UserId.Equals(currentUserId))
+            {
+                throw new NotAllowedActionException();
+            }
+
+            List<Movie> moviesInCollection = await _collectionContext.UserMovieCollections.Where(umc => umc.UserCollectionId == collectionId)
+                .Select(umc => umc.Movie).ToListAsync();
+
+            List<Movie> allMovies = await _collectionContext.Movies.ToListAsync();
+
+            List<Movie> availableMovies = allMovies.Except(moviesInCollection).ToList();
+
+            return _mapper.Map<List<MovieDto>>(availableMovies);
+        }
+
+        public async Task<MovieCollectionDto> AddMoviesAsync(int id, string currentUserId, List<int> movieIds)
+        {
+            UserCollection collection = await _collectionContext.UserCollections.FindAsync(id);
+
+            if (collection == null)
+            {
+                throw new CollectionNotExistException();
+            }
+
+            if (!collection.UserId.Equals(currentUserId))
+            {
+                throw new NotAllowedActionException();
+            }
+
+            List<UserMovieCollection> newMoviesInCollection = new();
+            movieIds.ForEach(movieId =>
+            {
+                newMoviesInCollection.Add(new UserMovieCollection
+                {
+                    MovieId = movieId,
+                    UserCollectionId = id
+                });
+            });
+
+            _collectionContext.UserMovieCollections.AddRange(newMoviesInCollection);
+            await _collectionContext.SaveChangesAsync();
 
             return _mapper.Map<MovieCollectionDto>(collection);
         }

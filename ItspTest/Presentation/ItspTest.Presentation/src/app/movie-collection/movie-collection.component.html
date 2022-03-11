@@ -6,16 +6,12 @@
     <thead>
         <tr>
             <th scope="col">Name</th>
-            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let collection of movieCollections; index as i">
             <td>
-                {{ collection.name }}
-            </td>
-            <td>
-                <a *ngIf="collection.canEdit" [routerLink]="[collection.id, 'movies']">Edit</a>
+                <a [routerLink]="[collection.id, 'movies']">{{ collection.name }}</a>
             </td>
         </tr>
     </tbody>

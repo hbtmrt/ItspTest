@@ -11,10 +11,13 @@ import { Movie } from './collection-details.model';
 })
 export class CollectionDetailsComponent implements OnInit, OnDestroy {
 
-  collectionName: string ="";
+  collectionName: string = "";
   collectionId: number = 0;
   searchText: string = "";
   movies: Array<Movie> = [];
+  addingMoviesMode = false;
+  isUserCreatedCollection = false;
+  availableMovies: Array<Movie> = [];
 
   private destroy$ = new Subject();
 
@@ -27,6 +30,11 @@ export class CollectionDetailsComponent implements OnInit, OnDestroy {
     this.readCollectionIdAndLoadMovies();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+  }
+
   search(searchText: string) {
     this.searchText = searchText
     this.dataService.searchCollection(this.collectionId, this.searchText)
@@ -34,6 +42,30 @@ export class CollectionDetailsComponent implements OnInit, OnDestroy {
       .subscribe((movies: Array<Movie>) => {
         this.movies = movies;
       });
+  }
+
+  addMoviesToCollection() {
+    const selectedMovies = this.availableMovies.filter(a => a.isSelected);
+    const selectedMovieIds = selectedMovies.map(({ id }) => id);
+
+    this.dataService.addMoviesToCollection(this.collectionId, selectedMovieIds)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(data => {
+        this.refreshPage();
+      });
+  }
+
+  deleteMovieFromCollection(movieId: number) {
+    this.dataService.deleteMovieFromCollection(this.collectionId, movieId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(data => {
+        this.refreshPage();
+      });
+  }
+
+  private refreshPage() {
+    this.search("");
+    this.loadAvailableMovies();
   }
 
   private readCollectionIdAndLoadMovies() {
@@ -47,6 +79,7 @@ export class CollectionDetailsComponent implements OnInit, OnDestroy {
               takeUntil(this.destroy$),
               switchMap(collection => {
                 this.collectionName = collection.name;
+                this.isUserCreatedCollection = collection.userId == localStorage.getItem('itspUserId');
                 return this.dataService.searchCollection(this.collectionId, this.searchText);
               })
             )
@@ -54,11 +87,15 @@ export class CollectionDetailsComponent implements OnInit, OnDestroy {
       )
       .subscribe((movies: Array<Movie>) => {
         this.movies = movies;
+        this.loadAvailableMovies();
       });
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
+  private loadAvailableMovies() {
+    this.dataService.getAvailableMovies(this.collectionId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((movies: Array<Movie>) => {
+        this.availableMovies = movies;
+      });
   }
 }

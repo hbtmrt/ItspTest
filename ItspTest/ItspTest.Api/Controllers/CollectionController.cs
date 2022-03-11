@@ -119,6 +119,26 @@ namespace ItspTest.Api.Controllers
             }
         }
 
+        [HttpGet("{id}/availableMovies")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MovieDto>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAvailableMovies(int id)
+        {
+            _logger.LogInformation(Constants.Log.Info.GetCollectionsRequestReceived);
+            string currentUserId = _userService.GetUserId(User);
+            return Ok(await _movieCollectionService.GetAvailableMovies(id, currentUserId));
+        }
+
+        [HttpPost("{id}/movies/add-range")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MovieDto>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AddMoviesAsync(int id, [FromBody] AddMoviesRequest request)
+        {
+            _logger.LogInformation(Constants.Log.Info.GetCollectionsRequestReceived);
+            string currentUserId = _userService.GetUserId(User);
+            return Ok(await _movieCollectionService.AddMoviesAsync(id, currentUserId, request.MovieIds));
+        }
+
         [HttpPost("{id}/movies")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MovieDto))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

@@ -31,4 +31,23 @@ export class CollectionDataService {
     const url = this.baseUrl + `/api/Collection/${collectionId}/movies?search=${searchText}`;
     return this.http.get<Array<Movie>>(url, { headers: this.headers });
   }
+
+  public getAvailableMovies(collectionId: number): Observable<Array<Movie>> {
+    const url = this.baseUrl + `/api/Collection/${collectionId}/availableMovies`;
+    return this.http.get<Array<Movie>>(url, { headers: this.headers });
+  }
+
+  public addMoviesToCollection(collectionId: number, movieIds: Array<number>): Observable<any> {
+    const url = this.baseUrl + `/api/Collection/${collectionId}/movies/add-range`;
+    const request = {
+      movieIds: movieIds
+    };
+
+    return this.http.post<any>(url, request, { headers: this.headers });
+  }
+
+  public deleteMovieFromCollection(collectionId: number, movieId: number): Observable<any> {
+    const url = this.baseUrl + `/api/Collection/${collectionId}/movies/${movieId}`;
+    return this.http.delete<any>(url, { headers: this.headers });
+  }
 }
