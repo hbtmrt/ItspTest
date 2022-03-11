@@ -4,6 +4,7 @@ using ItspTest.Api.Services.User;
 using ItspTest.Core.Models;
 using ItspTest.Core.Statics;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ using System.Threading.Tasks;
 
 namespace ItspTest.Api.Controllers
 {
+    [EnableCors("OpenCORSPolicy")]
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
@@ -69,7 +71,8 @@ namespace ItspTest.Api.Controllers
             return Ok(new
             {
                 token = tokenString,
-                expiration = token.ValidTo
+                expiration = token.ValidTo,
+                userId = user.Id
             });
         }
 

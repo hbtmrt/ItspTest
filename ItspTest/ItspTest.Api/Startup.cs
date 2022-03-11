@@ -20,6 +20,8 @@ namespace ItspTest.Api
 {
     public class Startup
     {
+        private readonly string CORSOpenPolicy = "OpenCORSPolicy";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -30,7 +32,16 @@ namespace ItspTest.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                  name: CORSOpenPolicy,
+                  builder =>
+                  {
+                      builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
+                  });
+            });
+
             services.AddControllers();
 
             var mapperConfig = new MapperConfiguration(mc =>
@@ -100,6 +111,7 @@ namespace ItspTest.Api
 
             app.UseRouting();
 
+            app.UseCors(CORSOpenPolicy);
             app.UseAuthentication();
             app.UseAuthorization();
 

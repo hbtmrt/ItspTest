@@ -7,6 +7,7 @@ using ItspTest.Core.Contexts;
 using ItspTest.Core.CustomExceptions;
 using ItspTest.Core.Statics;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace ItspTest.Api.Controllers
 {
+    [EnableCors("OpenCORSPolicy")]
     [Authorize(Roles = Role.User)]
     [Route("api/[controller]")]
     [ApiController]
