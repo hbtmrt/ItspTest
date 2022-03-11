@@ -13,14 +13,24 @@ namespace ItspTest.Api.Services.MovieCollection
 {
     public sealed class MovieCollectionService : IMovieCollectionService
     {
+        #region Declarations
+
         private readonly CollectionContext _collectionContext;
         private readonly IMapper _mapper;
+
+        #endregion Declarations
+
+        #region Constructor
 
         public MovieCollectionService(CollectionContext context, IMapper mapper)
         {
             _collectionContext = context;
             _mapper = mapper;
         }
+
+        #endregion Constructor
+
+        #region Methods
 
         public async Task<List<MovieCollectionDto>> GetUserCollectionsAsync()
         {
@@ -58,7 +68,7 @@ namespace ItspTest.Api.Services.MovieCollection
                 throw new CollectionNotExistException();
             }
 
-            var query =_collectionContext.UserMovieCollections.Include(umc => umc.Movie)
+            var query = _collectionContext.UserMovieCollections.Include(umc => umc.Movie)
                 .Where(umc => umc.UserCollectionId == id).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchText))
@@ -193,5 +203,7 @@ namespace ItspTest.Api.Services.MovieCollection
 
             return _mapper.Map<MovieCollectionDto>(collection);
         }
+
+        #endregion Methods
     }
 }

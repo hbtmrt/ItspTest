@@ -51,7 +51,6 @@
                 public const string NotAllowed = "Sorry, you cannot perform this action.";
                 public const string MovieNotFoundInCollection = "Movie of id {0} not found in the collection of id {1}";
                 public const string DeleteMovieFailed = "Failed on Deleting movie {1}";
-
             }
         }
     }

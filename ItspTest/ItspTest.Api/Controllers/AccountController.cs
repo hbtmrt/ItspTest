@@ -24,9 +24,15 @@ namespace ItspTest.Api.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        #region Declarations
+
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AccountController> _logger;
+
+        #endregion Declarations
+
+        #region Construtor
 
         public AccountController(
             IUserService userService,
@@ -37,6 +43,10 @@ namespace ItspTest.Api.Controllers
             _configuration = configuration;
             _logger = logger;
         }
+
+        #endregion Construtor
+
+        #region Methods
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
@@ -115,5 +125,7 @@ namespace ItspTest.Api.Controllers
 
             return Ok(user);
         }
+
+        #endregion Methods
     }
 }

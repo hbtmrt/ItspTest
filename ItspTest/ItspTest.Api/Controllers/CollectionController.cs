@@ -3,7 +3,6 @@ using ItspTest.Api.Dtos.Requests;
 using ItspTest.Api.Services.MovieCollection;
 using ItspTest.Api.Services.User;
 using ItspTest.Core.Authorization;
-using ItspTest.Core.Contexts;
 using ItspTest.Core.CustomExceptions;
 using ItspTest.Core.Statics;
 using Microsoft.AspNetCore.Authorization;
@@ -25,9 +24,15 @@ namespace ItspTest.Api.Controllers
     [ApiController]
     public class CollectionController : ControllerBase
     {
+        #region Delcarations
+
         private readonly IMovieCollectionService _movieCollectionService;
         private readonly IUserService _userService;
         private readonly ILogger<AccountController> _logger;
+
+        #endregion Delcarations
+
+        #region Constructor
 
         public CollectionController(
             IMovieCollectionService movieCollectionService,
@@ -38,6 +43,10 @@ namespace ItspTest.Api.Controllers
             _userService = userService;
             _logger = logger;
         }
+
+        #endregion Constructor
+
+        #region Methods
 
         [AllowAnonymous]
         [HttpGet("test")]
@@ -214,5 +223,7 @@ namespace ItspTest.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
         }
+
+        #endregion Methods
     }
 }

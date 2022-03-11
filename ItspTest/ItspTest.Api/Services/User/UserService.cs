@@ -1,5 +1,4 @@
-﻿using ItspTest.Core.Contexts;
-using ItspTest.Core.Models;
+﻿using ItspTest.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,9 +10,14 @@ namespace ItspTest.Api.Services.User
 {
     public sealed class UserService : IUserService
     {
+        #region Declarations
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly ApplicationDbContext _applicationDbContext;
+
+        #endregion Declarations
+
+        #region Constructor
 
         public UserService(
             UserManager<ApplicationUser> userManager,
@@ -22,6 +26,10 @@ namespace ItspTest.Api.Services.User
             _userManager = userManager;
             _roleManager = roleManager;
         }
+
+        #endregion Constructor
+
+        #region Methods
 
         public async Task<ApplicationUser> GetUserAsync(string username, string password)
         {
@@ -63,5 +71,7 @@ namespace ItspTest.Api.Services.User
         }
 
         public string GetTest() => "test test";
+
+        #endregion Methods
     }
 }
